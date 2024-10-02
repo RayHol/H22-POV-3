@@ -1,30 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>360 AR Web App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR.js + A-Frame 360 Sky with Two Layers</title>
+
+    <!-- Include A-Frame -->
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="selfie-anywhere.js"></script>
+
+    <!-- Include AR.js for camera-based AR -->
+    <script src="https://rawgit.com/jeromeetienne/ar.js/master/aframe/build/aframe-ar.js"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; }
+    </style>
 </head>
 
 <body>
-    
-    <a-scene vr-mode-ui="enabled: false">
-        <!-- Camera to capture device's real-world view -->
-        <a-camera id="camera" position="0 1.6 0" look-controls="enabled: false"></a-camera>
 
-        <!-- 360 transparent images for depth effect -->
-        <a-sky id="background360" src="assets/360image1.png" rotation="0 0 0" transparency="true"></a-sky>
-        <a-sky id="background360-depth" src="assets/360image2.png" rotation="0 0 0" scale="1.5 1.5 1.5" transparency="true"></a-sky>
+    <!-- A-Frame scene for AR.js -->
+    <a-scene id="ar-scene" vr-mode-ui="enabled: false" arjs="sourceType: webcam; debugUIEnabled: false;" style="display:block;">
+        <!-- First skybox for 360-degree image -->
+        <a-sky id="sky1" src="images/tb-hdri.png" radius="400" material="transparent: true; opacity: 1;"></a-sky>
 
-        <!-- Real-world view using the device's main camera -->
-        <a-video id="real-world-feed" autoplay="true" position="0 0 0" width="16" height="9" rotation="0 180 0"></a-video>
-        
+        <!-- Second skybox for layering effect -->
+        <a-sky id="sky2" src="images/shard-hdri.png" radius="300" material="transparent: true; opacity: 1;"></a-sky>
+
+        <!-- AR.js camera -->
+        <a-entity camera></a-entity>
     </a-scene>
+
+    <script>
+        // Function to lock both skyboxes to the device's compass heading
+        window.addEventListener('deviceorientation', function(event) {
+            const alpha = event.alpha; // Compass heading in degrees
+            const sky1 = document.getElementById('sky1');
+            const sky2 = document.getElementById('sky2');
+
+            if (sky1 && sky2) {
+                console.log(`Alpha: ${alpha}`);  // Debug output to track rotation value
+                // Rotate both skyboxes based on the alpha (compass heading)
+                sky1.setAttribute('rotation', `0 ${alpha} 0`);
+                sky2.setAttribute('rotation', `0 ${alpha} 0`);
+            }
+        });
+    </script>
 
 </body>
 
