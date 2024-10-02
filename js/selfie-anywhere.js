@@ -9,14 +9,18 @@ function setupMainCameraFeed() {
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
         .then(function (stream) {
+            console.log("Camera feed accessed successfully."); // Debug line
             videoElement.srcObject = stream;
             videoElement.play();
         })
         .catch(function (err) {
-            console.log("Error accessing device camera: ", err);
+            console.error("Error accessing camera feed: ", err); // Log errors
         });
+    } else {
+        console.error("Browser does not support media devices.");
     }
 }
+
 
 // Call the camera setup function when the page loads
 window.onload = function() {
